@@ -31,3 +31,4 @@ with mp_face_detection.FaceDetection(min_detection_confidence=0.5,model_selectio
 
 
 # save image
+cv2.imwrite('data/picture1_blurred.jpeg',img)
