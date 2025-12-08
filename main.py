@@ -1,13 +1,8 @@
 import cv2
 import mediapipe as mp
-# read image
-img_path = 'data/picture1.jpeg'
-img =cv2.imread(img_path)
+import argparse 
 
-H,W,_ =img.shape
-# detect faces
-mp_face_detection =mp.solutions.face_detection
-with mp_face_detection.FaceDetection(min_detection_confidence=0.5,model_selection=0) as face_detetion:
+def process_img(img,face_detetion): 
     rgb_img =cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
     out =face_detetion.process(rgb_img)
 
@@ -24,11 +19,27 @@ with mp_face_detection.FaceDetection(min_detection_confidence=0.5,model_selectio
             # img = cv2.rectangle(img,(x1,y1),(x1+w,y1+h),(0,255,0),10)
             # blur faces
             img[y1:y1+h,x1:x1+w,:] = cv2.blur(img[y1:y1+h,x1:x1+w,:],(70,70))
+    return img
 
-    cv2.imshow('image',img)
-    cv2.waitKey(0)
+args =argparse.ArgumentParser()
+args.add_argument("--mode",default="image") 
+args.add_argument("--filePath",default='data/picture1.jpeg')           
+     
 
+args = args.parse_args()       
 
+# detect faces
+mp_face_detection =mp.solutions.face_detection
+with mp_face_detection.FaceDetection(min_detection_confidence=0.5,model_selection=0) as face_detetion:
+    # read image
+   
+    if args.mode in ["image"]: 
+         img =cv2.imread(args.filePath)
 
-# save image
-cv2.imwrite('data/picture1_blurred.jpeg',img)
+         H,W,_ =img.shape
+         
+    img = process_img(img,face_detetion)
+    
+
+    # save image
+    cv2.imwrite('data/picture1_blurred.jpeg',img)
