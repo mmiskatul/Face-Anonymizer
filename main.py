@@ -1,7 +1,7 @@
 import cv2
 import mediapipe as mp
 # read image
-img_path = 'data/picture2.jpeg'
+img_path = 'data/picture1.jpeg'
 img =cv2.imread(img_path)
 
 H,W,_ =img.shape
@@ -21,11 +21,13 @@ with mp_face_detection.FaceDetection(min_detection_confidence=0.5,model_selectio
             y1 =int(y1 * H)
             w =int(w * W)
             h =int(h * H)
-            img = cv2.rectangle(img,(x1,y1),(x1+w,y1+h),(0,255,0),10)
+            # img = cv2.rectangle(img,(x1,y1),(x1+w,y1+h),(0,255,0),10)
+            # blur faces
+            img[y1:y1+h,x1:x1+w,:] = cv2.blur(img[y1:y1+h,x1:x1+w,:],(70,70))
 
     cv2.imshow('image',img)
     cv2.waitKey(0)
 
-# blur faces
+
 
 # save image
