@@ -63,3 +63,20 @@ with mp_face_detection.FaceDetection(min_detection_confidence=0.5, model_selecti
         cap.release()
         output_video.release()
         cv2.destroyAllWindows()
+    elif args.mode in ["webcam"]:
+        cap = cv2.VideoCapture(0)
+
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+            frame =cv2.flip(frame,-1)
+            # process current frame
+            frame = process_img(frame, face_detetion)
+
+            cv2.imshow("Webcam Face Blurring", frame)
+            if cv2.waitKey(25) & 0xFF == ord('q'):
+                break
+
+        cap.release()
+        cv2.destroyAllWindows() 
