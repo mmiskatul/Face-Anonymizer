@@ -24,21 +24,19 @@ def process_img(img, face_detetion):
 
 
 args = argparse.ArgumentParser()
-args.add_argument("--mode", default="video")
-args.add_argument("--filePath", default='../3.mp4')
-
+args.add_argument("--mode", default="webcam")  # FIXED spelling
+args.add_argument("--filePath", default=None)
 args = args.parse_args()
 
-# detect faces
 mp_face_detection = mp.solutions.face_detection
 with mp_face_detection.FaceDetection(min_detection_confidence=0.5, model_selection=0) as face_detetion:
+
     if args.mode in ["image"]:
         img = cv2.imread(args.filePath)
         img = process_img(img, face_detetion)
         cv2.imwrite('data/picture1_blurred.jpeg', img)
 
     if args.mode in ["video"]:
-
         cap = cv2.VideoCapture(args.filePath)
         ret, frame = cap.read()
 
@@ -51,32 +49,28 @@ with mp_face_detection.FaceDetection(min_detection_confidence=0.5, model_selecti
         )
 
         while ret:
-            # process current frame
             frame = process_img(frame, face_detetion)
-
-            # write to output video
             output_video.write(frame)
-
-            # read next frame
             ret, frame = cap.read()
 
         cap.release()
         output_video.release()
         cv2.destroyAllWindows()
+
     elif args.mode in ["webcam"]:
         cap = cv2.VideoCapture(0)
 
         while True:
-            ret, frame = cap.read()
+            ret, frame = cap.read()      # FIXED → must read each loop
             if not ret:
                 break
-            frame =cv2.flip(frame,-1)
-            # process current frame
-            frame = process_img(frame, face_detetion)
 
+            frame = process_img(frame, face_detetion)
+            frame = cv2.flip(frame, 1)    # FIXED → better flip horizontally
             cv2.imshow("Webcam Face Blurring", frame)
-            if cv2.waitKey(25) & 0xFF == ord('q'):
+
+            if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
         cap.release()
-        cv2.destroyAllWindows() 
+        cv2.destroyAllWindows()
